@@ -1,22 +1,21 @@
-
+--------All 11 data sets have been extracted to the MySql workbench-------------
 SELECT * FROM music_database.invoice;
 
 --------------------------------- TASK 1 the country with maximum invoice-----------------------------------------------------
+-------Approach 1
 select count(*) as c, billing_country from music_database.invoice
 group by billing_country order by c desc; 
 
+-------Approach 2
 select count(*) as total_invoices,billing_country  as invoice_count, row_number()
 over (order by  billing_country desc ) as rnk from music_database.invoice group by billing_country ;
 
-
-with a as (select billing_country  as invoice_count, row_number()
-over (order by  billing_country desc ) as rnk from music_database.invoice group by billing_country )
-select invoice_count from a where rnk = 1;
-
+------Approach 3
 with a as (select count(*), billing_country as invoice_count, row_number()
 over (order by  billing_country desc ) as rnk from music_database.invoice group by billing_country)
 select invoice_count from a where rnk=1; 
 
+------Approach 4
 select count(*),billing_country  as invoice_count, row_number()
 over (order by  billing_country desc ) as rnk from music_database.invoice group by billing_country  limit 1;
 
@@ -34,10 +33,11 @@ SELECT customer.customer_id,customer.first_name,customer.last_name,SUM(invoice.t
 JOIN invoice ON customer.customer_id = invoice.customer_id 
 GROUP BY customer.customer_id, customer.first_name, customer.last_name 
 ORDER BY total_money_spent DESC;
----------------------- it is good practice to write the selected column in group by section----------------
+
+----Key Point:-  it is good practice to write the selected column in group by section----------------
  
  ------------------------ Select email, first_name, last_name and genre having rock ----------
- 
+ -----------Approach 1
  select distinct email, first_name, last_name 
  from customer 
  join invoice on customer.customer_id = invoice.customer_id
@@ -47,7 +47,8 @@ ORDER BY total_money_spent DESC;
  join genre on genre.genre_id = track.genre_id 
  where genre.name like 'Rock')
  order by email;
- ----------- MY Simple QUERY 
+
+ ----------- Approach 2
  select distinct customer.email,customer.first_name,customer.last_name from customer 
  join invoice on invoice.customer_id = customer.customer_id
  join invoice_line on invoice_line.invoice_id=invoice.invoice_id
@@ -57,6 +58,7 @@ ORDER BY total_money_spent DESC;
  order by customer.email;
  
 -------------------------- TASK 4 Artist who have written most of the rock music--------
+----------Approach 1
 select artist.artist_id,artist.name, count(artist.artist_id) as number_of_songs from track
 join album2 ON album2.album_id=track.album_id
 join artist on artist.artist_id=album2.artist_id
@@ -66,7 +68,7 @@ group by artist.artist_id,artist.name
 order by number_of_songs desc
 limit 10;
 
------------ simple query 
+-----------Approach 2
 select artist.name, artist.artist_id, count(artist.artist_id) as number_of_songs
 from artist
 join album2 on  album2.artist_id = artist.artist_id 
@@ -78,6 +80,7 @@ order by number_of_songs desc
 limit 10;
 
 -------------------------------- TASK 5 find how much amount is spent by each customer on artists -----------
+-------------Approach 1
 WITH best_selling_artist AS (
     SELECT
         artist.artist_id,
@@ -113,7 +116,7 @@ ORDER BY
     amount_paid DESC;
 
 
------------------------ my simple query 
+-------------------Approach 3
 
 select customer.customer_id,customer.first_name,customer.last_name, artist.name, sum(invoice_line.unit_price* invoice_line.quantity) as total_sales
 from invoice
@@ -126,7 +129,7 @@ group by customer.customer_id,customer.first_name,customer.last_name, artist.nam
 order by total_sales desc; 
 
 --------------------------------- TASK 6 most popular music genre for each country-------------------------------
-
+-----------Approach 1
 select 
      genre.name,customer.country,
      count(invoice_line.quantity) 
@@ -141,7 +144,7 @@ join genre on genre.genre_id = track.genre_id
 group by customer.country,genre.name
 order by country_sale desc;
 
------------- using window function 
+------------Approach 2 (using window function) 
 with b as(select genre.name,customer.country
 , count(invoice_line.quantity) as quantity_of_sale,
 row_number() over(partition by customer.country) as country_wise_sale from customer
@@ -154,6 +157,7 @@ order by quantity_of_sale)
 select * from b where country_wise_sale <=1;
 
 ------------------------- TAS 7 determine the customer that has spent most on the music for each country ----------------------------
+------------Approach 1
 with a as (select customer.customer_id,customer.first_name,customer.last_name,invoice.billing_country,
 sum(total) as amount,
 rank() over (partition by invoice.billing_country order by sum(total) desc) as ranking 
