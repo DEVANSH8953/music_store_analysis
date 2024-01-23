@@ -1,6 +1,14 @@
 --------All 11 data sets have been extracted to the MySql workbench-------------
 SELECT * FROM music_database.invoice;
 
+/* Q1: Who is the senior most employee based on job title? */
+
+SELECT title, last_name, first_name 
+FROM employee
+ORDER BY levels DESC
+LIMIT 1
+
+
 --------------------------------- TASK 1 the country with maximum invoice-----------------------------------------------------
 -------Approach 1
 select count(*) as c, billing_country from music_database.invoice
