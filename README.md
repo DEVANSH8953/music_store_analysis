@@ -6,3 +6,4 @@ The project will utilize a dataset comprising tables related to different aspect
 <h2>Database and Tools</h2>
 SQL 
 MySql 
+![MusicDatabaseSchema](https://github.com/DEVANSH8953/music_store_analysis/assets/99635503/ddc3de61-c9e9-463f-98b4-844e7f73e5d0)
